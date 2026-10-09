@@ -23,11 +23,15 @@ end of a live session.
   - https://dev.epicgames.com/community/learning/tutorials/8KnB/free-houdini-21-0-753-unreal-engine-5-8-building-generator-for-beginners-and-advanced-users
   - https://dev.epicgames.com/community/learning/tutorials/9mXME/part-5-upgrade-building-generator-houdini-21-0-753-unreal-engine-5-8-2
 
-## Download
+## Download - two versions, pick the one that fits your work
 
-- **Current version (v2, the one from Part 5):** the `BuildGen` folder of this repository, or the zip
-  on the [Releases](https://github.com/AlexKorotkin-creator/BuildingGenerator/releases) page.
-- **First version (v1, the one from Part 1-4):** also on the Releases page.
+Both are on the [Releases](https://github.com/AlexKorotkin-creator/BuildingGenerator/releases) page.
+
+| | **v2** (Part 5) - in this repository's `BuildGen` folder | **v1** (Part 1-4) |
+|---|---|---|
+| Speed | **Much faster** - built for heavy blocks with millions of triangles | Slower: works with static meshes and recalculates several times |
+| Saving | Build a building **in one sitting**: if Houdini or Unreal is closed halfway, you start that building again | **You can save** and carry on the next day |
+| Best for | Getting a building done quickly in one session | Long, careful work spread over several days |
 
 ## Requirements
 
