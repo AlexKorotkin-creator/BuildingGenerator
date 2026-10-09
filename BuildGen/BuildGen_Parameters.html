@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BuildGen — Parameter Reference</title>
+<style>
+  :root{
+    --bg:#f7f7f5; --fg:#1c1c1a; --muted:#6b6b66; --line:#e0e0da;
+    --card:#fff; --accent:#b4531f; --code:#f0efea;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{ --bg:#17181a; --fg:#e6e6e2; --muted:#9a9a94; --line:#2c2e31;
+           --card:#1e2023; --accent:#e08a4e; --code:#26282b; }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--fg);
+       font:15px/1.55 -apple-system,"Segoe UI",Roboto,Arial,sans-serif;}
+  .wrap{max-width:960px;margin:0 auto;padding:40px 22px 80px}
+  h1{font-size:27px;margin:0 0 6px;letter-spacing:-.01em}
+  .sub{color:var(--muted);margin:0 0 26px;font-size:14px}
+  h2{font-size:19px;margin:38px 0 4px;padding-bottom:7px;border-bottom:2px solid var(--accent)}
+  h2 .tab{font-size:12px;color:var(--muted);font-weight:400;border:1px solid var(--line);
+          border-radius:4px;padding:2px 7px;margin-left:9px;vertical-align:2px}
+  h3{font-size:15px;margin:24px 0 8px;color:var(--accent)}
+  p.note{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--accent);
+         border-radius:0 6px 6px 0;padding:10px 14px;margin:12px 0;font-size:14px}
+  table{width:100%;border-collapse:collapse;margin:10px 0 4px;background:var(--card);
+        border:1px solid var(--line);border-radius:6px;overflow:hidden}
+  th{text-align:left;font-size:12px;text-transform:uppercase;letter-spacing:.05em;
+     color:var(--muted);font-weight:600;padding:9px 12px;border-bottom:1px solid var(--line)}
+  td{padding:9px 12px;border-top:1px solid var(--line);vertical-align:top}
+  tr:first-child td{border-top:none}
+  td.n{width:31%;font-weight:600}
+  td.n small{display:block;font-weight:400;color:var(--muted);font-size:12px;
+             font-family:ui-monospace,Consolas,monospace;margin-top:2px}
+  td.d{width:11%;color:var(--muted);font-family:ui-monospace,Consolas,monospace;font-size:12.5px}
+  code{background:var(--code);border-radius:3px;padding:1px 5px;
+       font-family:ui-monospace,Consolas,monospace;font-size:12.5px}
+  .toc{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:14px 18px;margin:0 0 8px}
+  .toc a{color:var(--fg);text-decoration:none;border-bottom:1px solid var(--line);
+         display:inline-block;margin:3px 14px 3px 0;font-size:14px}
+  .toc a:hover{border-color:var(--accent);color:var(--accent)}
+  .tree{background:var(--code);border-radius:6px;padding:12px 16px;margin:12px 0;
+        font-family:ui-monospace,Consolas,monospace;font-size:13px;line-height:1.7;
+        white-space:pre;overflow-x:auto}
+  footer{margin-top:50px;padding-top:16px;border-top:1px solid var(--line);
+         color:var(--muted);font-size:13px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>BuildGen — Parameter Reference</h1>
+<p class="sub">What every control on the generator does. Listed in the same order as the node's parameter panel.</p>
+
+<div class="toc">
+  <a href="#top">Button on top</a>
+  <a href="#floors">Floors / Blocks</a>
+  <a href="#freeze">Freeze — the locks</a>
+  <a href="#stairs">Stairs / Elevator</a>
+  <a href="#columns">Columns</a>
+  <a href="#lights">Lights</a>
+  <a href="#roof">Roof</a>
+  <a href="#unreal">Unreal</a>
+  <a href="#pack">Pack</a>
+  <a href="#collision">Collision</a>
+  <a href="#uv">About the UV parameters</a>
+</div>
+
+<p class="note"><strong>General.</strong> All sizes are in metres. Up is <code>Y</code> in Houdini; the same axis is called <code>Z</code> in Unreal. Every "Make …" toggle is off by default — the generator only builds what you switch on. Setup and the one-time block export are covered in <code>README.txt</code> next to this file.</p>
+
+<h2 id="top">Button above the tabs</h2>
+<table>
+<tr><td class="n">Save Blocks From UE<small>save_from_ue</small></td><td class="d">button</td>
+<td>Takes the meshes that arrived from Unreal via "Send to Houdini" and writes them into the <em>Blocks Folder</em> as <code>.bgeo.sc</code> files, with the correct names. No paths to type. It then recooks the generator, so the building appears. If you select the incoming subnet before pressing, that selection wins over the automatic search.</td></tr>
+</table>
+
+<h2 id="floors">Floors / Blocks <span class="tab">tab</span></h2>
+<p>This is where the facade is assembled. Three levels of nesting, each one a multiparm (a list with a "+" button):</p>
+<div class="tree">Floors            the storeys
+ └ FLOOR #        one storey
+    └ Sides       the sides of that storey (the faces of the building)
+       └ SIDE #_#     one side
+          └ BLOCKS    the chain of blocks along that side
+             └ BLOCK #_#_#</div>
+<p class="note">Instance numbers appear in the label of the <em>first</em> parameter inside each entry: <code>FLOOR #</code>, <code>SIDE #_#</code>, <code>BLOCK #_#_#</code>. Houdini does not substitute numbers into collapsed folder headers — that is an engine limitation, not a missing feature here.</p>
+
+<h3>Inside a floor</h3>
+<table>
+<tr><th>Parameter</th><th>Default</th><th>What it does</th></tr>
+<tr><td class="n">FLOOR # — Floor Offset (Z)<small>flooroffset#</small></td><td class="d">0</td>
+<td>Manual vertical nudge for this copied floor — for blocks whose tops are stepped or uneven. Cumulative up the stack; the ground floor ignores it.</td></tr>
+<tr><td class="n">Make Copy<small>floorcopy#</small></td><td class="d">off</td>
+<td>Duplicate this floor upward as identical copies. The normal way to gain height without assembling every storey by hand.</td></tr>
+<tr><td class="n">Copies<small>floorcopies#</small></td><td class="d">2</td>
+<td>How many of this floor in total. <code>1</code> = just this one, no copies.</td></tr>
+<tr><td class="n">FLOOR # — Freeze Floor<small>frzfloor#</small></td><td class="d">button</td>
+<td>Locks this floor <strong>and every floor below it</strong>, copies included, so adding the next storey no longer recomputes the ones already standing. That is the difference between seconds and minutes once the building gets tall. Press it only after the floor has actually drawn in Unreal — the lock seals whatever the node is holding at that moment. See <a href="#freeze">Freeze — the locks</a>.</td></tr>
+</table>
+
+<h3>Freeze — Storey Stack</h3>
+<table>
+<tr><th>Parameter</th><th>Default</th><th>What it does</th></tr>
+<tr><td class="n">UNFREEZE STACK<small>frz_stack_unfreeze</small></td><td class="d">button</td>
+<td>Releases the stack of finished storeys — the lock that <em>FLOOR # — Freeze Floor</em> puts on. Everything up to the frozen mark is recomputed once, with the current code and the current parameters. This is the way out when a storey that is already standing refuses to follow a change you made. The classic symptom: on the copied floors the stairwell door comes out too low to walk through, while the ground floor and the roof are fine — those floors were sealed by an earlier pass, and only unfreezing the stack rewrites them. Expect one long cook, minutes rather than seconds, growing with the height of the building. <strong>There is no matching FREEZE button in the panel, by design</strong> — the stack is frozen for you by <em>FLOOR # — Freeze Floor</em>, and a second button doing the same thing is too easy to press by accident.</td></tr>
+<tr><td class="n">Status<small>frz_stack_status</small></td><td class="d">live</td>
+<td>Read-only. <code>live</code> means nothing is sealed; otherwise it reports how far the stack is frozen, e.g. <code>FROZEN thru FLOOR 2 - 4 storeys, 362 prims</code>.</td></tr>
+</table>
+
+<h3>Freeze — Blocks</h3>
+<table>
+<tr><th>Parameter</th><th>Default</th><th>What it does</th></tr>
+<tr><td class="n">FREEZE BLOCKS / UNFREEZE BLOCKS<small>frz_blocks_freeze, frz_blocks_unfreeze</small></td><td class="d">buttons</td>
+<td>Locks the assembled facade blocks. Set the collision <em>Wall Thickness</em> before you press this — collision is built from the blocks, and a lock seals what is there now.</td></tr>
+<tr><td class="n">Status<small>frz_blocks_status</small></td><td class="d">live</td>
+<td>Read-only. <code>live</code> means the stage is still being computed; once frozen it reports what was sealed.</td></tr>
+</table>
+
+<h3>Building outline</h3>
+<table>
+<tr><th>Parameter</th><th>Default</th><th>What it does</th></tr>
+<tr><td class="n">Close Loop<small>closeloop</small></td><td class="d">off</td>
+<td>Close the outline: the end of the last side meets the start of the first. Needed for closed buildings, otherwise a gap is left.</td></tr>
+<tr><td class="n">Close Distance<small>closedist</small></td><td class="d">0.05</td>
+<td>How far the two ends of the outline are pulled together when closing.</td></tr>
+<tr><td class="n">Clean Up Unused Nodes<small>cleanup</small></td><td class="d">button</td>
+<td>Removes internal nodes left behind by sides and floors you deleted. Housekeeping only — the geometry is not affected.</td></tr>
+</table>
+
+<h3>Inside a side</h3>
+<table>
+<tr><th>Parameter</th><th>Default</th><th>What it does</th></tr>
+<tr><td class="n">SIDE #_# — Corner World Source<small>cornersrc#_#</small></td><td class="d">—</td>
+<td>The corner mesh this side starts with (a path to the source node of the block). The corner forms the joint with the previous side.</td></tr>
+<tr><td class="n">Bend Angle<small>sidebend#_#</small></td><td class="d">0</td>
+<td>How far this side turns away from the previous one, in degrees. Active while <em>Use Transform</em> is off.</td></tr>
+<tr><td class="n">Translate<small>sidetrans#_#</small></td><td class="d">0 0 0</td>
+<td>Manual position of the side. Active while <em>Use Transform</em> is on.</td></tr>
+<tr><td class="n">Rotate<small>siderot#_#</small></td><td class="d">0 0 0</td>
+<td>Manual rotation of the side. Also only with <em>Use Transform</em> on.</td></tr>
+<tr><td class="n">Use Transform (off = Bend)<small>usetransform#_#</small></td><td class="d">off</td>
+<td>Chooses how the side is placed: <strong>off</strong> — the side bends off the previous one by <em>Bend Angle</em> (the normal mode, sides stay attached to each other); <strong>on</strong> — the side is placed by hand with Translate/Rotate.</td></tr>
+</table>
+
+<h3>Inside a block</h3>
+<table>
+<tr><th>Parameter</th><th>Default</th><th>What it does</th></tr>
+<tr><td class="n">BLOCK #_#_# — World Source<small>blksrc#_#_#</small></td><td class="d">—</td>
+<td>The block mesh (a wall, a pier, and so on). The order in the list is the order along the side.</td></tr>
+<tr><td class="n">Offset<small>blkoff#_#_#</small></td><td class="d">0</td>
+<td>Extra shift along the side before this block — a gap, or an overlap if negative. Applied to every copy of the block, so it accumulates.</td></tr>
+<tr><td class="n">Copy This Block<small>blkcopy#_#_#</small></td><td class="d">off</td>
+<td>Repeat this block several times in a row, instead of adding ten identical walls by hand.</td></tr>
+<tr><td class="n">Copies<small>blkcopies#_#_#</small></td><td class="d">1</td>
+<td>How many copies of the block to place in a row.</td></tr>
+</table>
+
+<h3>Ground floor slab</h3>
+<table>
+<tr><th>Parameter</th><th>Default</th><th>What it does</th></tr>
+<tr><td class="n">Make Floor<small>makefloor</small></td><td class="d">off</td>
+<td>Fill a floor slab inside the building outline.</td></tr>
+<tr><td class="n">Floor Offset<small>floorinset</small></td><td class="d">0.3</td>
+<td>Shifts the edge of the floor outline before filling: <code>+</code> outward, <code>−</code> inward. A small positive value tucks the slab under the walls so there is no seam where they meet.</td></tr>
+<tr><td class="n">Floor Material<small>floormat</small></td><td class="d">DefaultMaterial</td>
+<td>Floor material — an Unreal asset path, e.g. <code>/Game/Materials/M_Concrete</code>.</td></tr>
+<tr><td class="n">Floor UV Type / Scale / Angle / Offset</td><td class="d">Face · 0.3</td>
+<td>UV projection of the floor — see <a href="#uv">About the UV parameters</a>.</td></tr>
+</table>
+
+<h3>Ceiling slab (ceiling of this storey = floor of the one above)</h3>
+<table>
+<tr><th>Parameter</th><th>Default</th><th>What it does</th></tr>
+<tr><td class="n">Make Ceiling<small>makeceiling</small></td><td class="d">off</td>
+<td>Build the slab between storeys. It is one slab doing two jobs: a ceiling from below, the floor of the next storey from above. Openings for the stairs and the shafts are cut automatically. The slab needs a contour curve — see <a href="#slabcurve">Drawing the slab curve</a> below.</td></tr>
+<tr><td class="n">Apply Slab Curve To Type<small>applyslabcurve</small></td><td class="d">button</td>
+<td>Stores the slab contour curve in the asset itself. Press it after you have drawn the curve and connected it inside the node — see <a href="#slabcurve">Drawing the slab curve</a>. Safe to press: it backs the <code>.hda</code> up first and refuses to write if anything inside the asset would be lost.</td></tr>
+<tr><td class="n">Slab Curve Status<small>slabstatus</small></td><td class="d">read-only</td>
+<td>Result of the last <em>Apply Slab Curve To Type</em> press: number of points stored and the new size of the asset file. Unreal fills this in after the next cook.</td></tr>
+<tr><td class="n">Offset inside/outside<small>ceiloffset</small></td><td class="d">−0.3</td>
+<td>Horizontal shift of the contour edge before filling: <code>+</code> outward, <code>−</code> inward. The negative default pulls the slab edge back inside the facade.</td></tr>
+<tr><td class="n">Thickness<small>ceilthick</small></td><td class="d">0.1</td>
+<td>Slab thickness.</td></tr>
+<tr><td class="n">Up Material + Up UV *<small>ceilupmat, ceilup_uv*</small></td><td class="d">DefaultMaterial</td>
+<td>Material and UVs of the <strong>top</strong> face — what people walk on upstairs.</td></tr>
+<tr><td class="n">Down Material + Down UV *<small>ceildownmat, ceildown_uv*</small></td><td class="d">DefaultMaterial</td>
+<td>Material and UVs of the <strong>bottom</strong> face — the ceiling of this storey.</td></tr>
+<tr><td class="n">Show Ceiling<small>showceil</small></td><td class="d">on</td>
+<td>Display switch only. Turn it off to see into the storey from above while you work; the slab is still built and still baked.</td></tr>
+</table>
+
+<h3 id="slabcurve">Drawing the slab curve</h3>
+<p>The slab is filled from a closed contour curve, and that curve lives inside the asset. Every building has its own outline, so the asset ships <strong>without</strong> one — draw it once, after the ground floor is standing.</p>
+<div class="tree">1  In Houdini, dive inside the generator node and draw a closed curve
+   along the outline you want the slab to follow.
+2  Connect it into the <b>ceiling_offset</b> node, input 0, replacing
+   whatever was there. The slab appears immediately.
+3  Press <b>Apply Slab Curve To Type</b> (the button works from Unreal too).
+4  In Unreal, press <b>Rebuild</b>.
+5  Switch <b>Make Ceiling</b> on.</div>
+<p class="note"><strong>Do not use <em>Save Node Type</em> for this.</strong> That command writes the contents of the node you are standing on back into the asset, and a working node is not an exact copy of it — anything the node happens to be missing at that moment is dropped from the asset. <em>Apply Slab Curve To Type</em> avoids this: it copies the curve into a fresh instance, compares the node list before and after, and restores the backup if anything would go missing. Steps 3 and 4 can be repeated as often as you like; each press leaves a timestamped <code>.hda</code> backup next to the asset.</p>
+
+<h2 id="freeze">Freeze — the locks</h2>
+<p>A tall building is expensive to rebuild: every change makes Houdini recompute the storeys and makes Unreal reassemble the meshes, and that reassembly alone is the single largest cost in the whole loop. The freeze controls exist to stop paying it for parts that are already finished.</p>
+<p>Each group is the same three controls — <strong>FREEZE …</strong>, <strong>UNFREEZE …</strong> and a read-only <strong>Status</strong> — and they sit next to the stage they belong to. The storey stack is the one exception — it is frozen for you, so only its <strong>UNFREEZE</strong> is in the panel:</p>
+<div class="tree">Floors / Blocks tab     Freeze — Blocks            the assembled facade
+                        Freeze — Floor / Ceiling   the slabs
+                        Freeze — Whole Storey      the finished storey, all parts merged
+                        FLOOR # — Freeze Floor     this floor and everything below it
+                        UNFREEZE STACK             releases what Freeze Floor sealed
+Stairs / Elevator tab   Freeze — Stairs / Elevator the stairs, both shafts and the car
+Columns tab             Freeze — Columns           the column grid</div>
+<p>A lock seals the geometry at that stage and takes it out of the recompute. <em>Status</em> reads <code>live</code> while the stage is still being computed, and reports what was sealed once it is frozen.</p>
+<p class="note"><strong>The one rule worth remembering: a lock stores finished geometry, not the recipe.</strong> If you change the asset, a parameter or a block after freezing, the frozen parts keep their <em>old</em> shape and will not pick the change up — they are a snapshot, not a live branch. When something refuses to follow a change you just made, the answer is almost always to unfreeze that stage, let it cook once, and freeze it again.</p>
+<p class="note"><strong>The storey stack is the one lock with no FREEZE button.</strong> <em>FLOOR # — Freeze Floor</em> is what seals it; <em>UNFREEZE STACK</em>, in its own group next to the floors, is what lets it go. Reach for it whenever a storey that is already standing ignores a change — a low stairwell door on the copied floors is the usual way this shows up. It costs one long cook, but a single unfreeze is far cheaper than releasing three other stages one at a time to chase the same symptom.</p>
+<p class="note"><strong>Order matters in one place.</strong> Freeze the columns only <em>after</em> the stairs and shafts exist. Columns that would stand inside a shaft are culled automatically, but a lock pressed too early seals the grid as it was — complete with a column standing in the stairwell.</p>
+<p>Two smaller habits that save a rebuild: set the collision <em>Wall Thickness</em> before <em>FREEZE BLOCKS</em>, and leave the roof unfrozen — it is one level, it costs little, and it is the part you keep adjusting.</p>
+
+<h2 id="stairs">Stairs / Elevator <span class="tab">tab</span></h2>
+
+<h3>Stairs</h3>
+<table>
+<tr><th>Parameter</th><th>Default</th><th>What it does</th></tr>
+<tr><td class="n">Make Stairs<small>makestairs</small></td><td class="d">off</td>
+<td>Build a staircase — a U-shaped switchback that runs the full height of the building.</td></tr>
+<tr><td class="n">Offset from Center X<small>stairoffset</small></td><td class="d">9.71</td>
+<td>Position of the staircase relative to the centre of the floor, along one plan axis.</td></tr>
+<tr><td class="n">Offset from Center Y<small>stairoffsety</small></td><td class="d">15.5</td>
+<td>The same along the other plan axis (this is Z in Houdini, hence the Unreal-style "Y").</td></tr>
+<tr><td class="n">Mirror (both sides)<small>stairmirror</small></td><td class="d">off</td>
+<td>Place a mirrored copy of the staircase on the opposite side of the building.</td></tr>
+<tr><td class="n">Mirror Axis<small>stairmiraxis</small></td><td class="d">Z</td>
+<td>Which axis to mirror across — X or Z.</td></tr>
+<tr><td class="n">Yaw<small>stairrot</small></td><td class="d">0</td>
+<td>Rotates the whole staircase block around the vertical axis.</td></tr>
+<tr><td class="n">Stair Width<small>stairwidth</small></td><td class="d">2.05</td>
+<td>Width of one flight.</td></tr>
+<tr><td class="n">Landing Depth<small>stairlanding</small></td><td class="d">2.15</td>
+<td>Depth of the mid landing where the flight turns back.</td></tr>
+<tr><td class="n">Step Rise<small>steprise</small></td><td class="d">0.18</td>
+<td>Height of one step. The number of steps is worked out for you: storey height ÷ Step Rise.</td></tr>
+<tr><td class="n">Step Run<small>steprun</small></td><td class="d">0.324</td>
+<td>Depth of one step (the tread).</td></tr>
+<tr><td class="n">Step Thickness<small>stepthick</small></td><td class="d">0.15</td>
+<td>Thickness of treads and landings. Steps become slabs with open space underneath, not a solid wedge.</td></tr>
+<tr><td class="n">Stair Material + Stair UV *</td><td class="d">DefaultMaterial</td>
+<td>Material and UVs of the staircase.</td></tr>
+</table>
+
+<h3>Stair shaft</h3>
+<table>
+<tr><th>Parameter</th><th>Default</th><th>What it does</th></tr>
+<tr><td class="n">Make Shaft<small>makeshaft</small></td><td class="d">off</td>
+<td>Wrap the staircase in shaft walls, with a door opening on every storey.</td></tr>
+<tr><td class="n">Shaft Wall Thickness<small>shaftthick</small></td><td class="d">0.2</td>
+<td>Thickness of the shaft walls.</td></tr>
+<tr><td class="n">Shaft Clearance<small>shaftclear</small></td><td class="d">0</td>
+<td>Gap between the stairs and the inner face of the walls, so the flight does not rub against them.</td></tr>
+<tr><td class="n">Shaft Entry Extend (×flight)<small>shaftentryext</small></td><td class="d">0</td>
+<td>Widens the entry opening, measured in flight lengths. Higher value, wider way in.</td></tr>
+<tr><td class="n">Shaft Door Height<small>shaftdoorheight</small></td><td class="d">2.742</td>
+<td>Height of the door opening. A storey shorter than the ground floor does not squash the door: the opening keeps this height and the wall above it stretches instead. Only a storey too low to fit the door at all forces it down.</td></tr>
+<tr><td class="n">Shaft Material + Shaft UV *</td><td class="d">DefaultMaterial</td>
+<td>Material and UVs of the shaft.</td></tr>
+</table>
+
+<h3>Elevator</h3>
+<table>
+<tr><th>Parameter</th><th>Default</th><th>What it does</th></tr>
+<tr><td class="n">Make Elevator Shaft<small>makeelevator</small></td><td class="d">off</td>
+<td>Build a full-height elevator shaft with openings on each storey, and a car inside it.</td></tr>
+<tr><td class="n">Offset X / Offset Y<small>elevoffx, elevoffz</small></td><td class="d">−17.9 / 0</td>
+<td>Position of the shaft relative to the centre of the floor, along the two plan axes.</td></tr>
+<tr><td class="n">Wall Thickness<small>elevthick</small></td><td class="d">0.2</td>
+<td>Thickness of the shaft walls.</td></tr>
+<tr><td class="n">Clearance<small>elevclear</small></td><td class="d">0</td>
+<td>Inner clearance of the shaft.</td></tr>
+<tr><td class="n">Entry Extend (x flight)<small>eleventryext</small></td><td class="d">0</td>
+<td>Widens the door opening, same idea as on the stair shaft.</td></tr>
+<tr><td class="n">Door Height<small>elevdoorheight</small></td><td class="d">2.6</td>
+<td>Height of the elevator door opening. Follows the same stretch rule as the stair shaft door.</td></tr>
+<tr><td class="n">Elevator Material + UV *</td><td class="d">DefaultMaterial</td>
+<td>Material and UVs of the shaft.</td></tr>
+<tr><td class="n">Car Gap (all sides)<small>elevcargap</small></td><td class="d">0.02</td>
+<td>Gap between the car and the shaft walls, on every side.</td></tr>
+<tr><td class="n">Car Floor Lift<small>elevfloorlift</small></td><td class="d">0.01</td>
+<td>Raises the car floor slightly, so it does not sit exactly on the slab and z-fight with it.</td></tr>
+<tr><td class="n">Car Wall Thickness<small>elevcarthick</small></td><td class="d">0.1</td>
+<td>Wall thickness of the car itself.</td></tr>
+<tr><td class="n">Car Position Y<small>elevcarpos</small></td><td class="d">0</td>
+<td>The height at which the car sits in the shaft.</td></tr>
+<tr><td class="n">Floor / Ceiling / Wall Material + UV *</td><td class="d">DefaultMaterial</td>
+<td>Material and UVs for the car's floor, ceiling and walls, set separately.</td></tr>
+</table>
+
+<h3>Freeze — Stairs / Elevator</h3>
+<table>
+<tr><th>Parameter</th><th>Default</th><th>What it does</th></tr>
+<tr><td class="n">FREEZE STAIRS / UNFREEZE STAIRS<small>frz_stairs_freeze, frz_stairs_unfreeze</small></td><td class="d">buttons</td>
+<td>Locks the stairs, both shafts and the car in one go. Press it once the stairwell is right — after this the columns can be frozen too. See <a href="#freeze">Freeze — the locks</a>.</td></tr>
+<tr><td class="n">Status<small>frz_stairs_status</small></td><td class="d">live</td>
+<td>Read-only state of this lock.</td></tr>
+</table>
+
+<h2 id="columns">Columns <span class="tab">tab</span></h2>
+<table>
+<tr><th>Parameter</th><th>Default</th><th>What it does</th></tr>
+<tr><td class="n">Make Columns<small>makecolumns</small></td><td class="d">off</td>
+<td>Place columns inside the storey on a regular grid.</td></tr>
+<tr><td class="n">Column Spacing<small>colspacing</small></td><td class="d">9</td>
+<td>Grid step of the columns. There is no separate wall-gap parameter — the gap to the walls is half the spacing.</td></tr>
+<tr><td class="n">Column Width<small>colwidth</small></td><td class="d">0.9</td>
+<td>Thickness of a column.</td></tr>
+<tr><td class="n">FREEZE COLUMNS / UNFREEZE COLUMNS<small>frz_columns_freeze, frz_columns_unfreeze</small></td><td class="d">buttons</td>
+<td>Locks the column grid. Columns are the most expensive single stage in the generator, so this is the lock that pays best — but press it <strong>only after the stairs and shafts exist</strong>, or you seal a column standing in the stairwell. See <a href="#freeze">Freeze — the locks</a>.</td></tr>
+<tr><td class="n">Status<small>frz_columns_status</small></td><td class="d">live</td>
+<td>Read-only state of this lock.</td></tr>
+<tr><td class="n">Clear Center Row<small>clearcenter</small></td><td class="d">off</td>
+<td>Remove the middle row, to free up the centre of the floor.</td></tr>
+<tr><td class="n">Shaft Clearance<small>colcullgap</small></td><td class="d">0.5</td>
+<td>Extra gap kept between a column and the stair/elevator shafts. Any column whose footprint falls inside a shaft plus this gap is removed automatically, so none ends up standing in the stairwell.</td></tr>
+<tr><td class="n">Column Mesh<small>colmesh</small></td><td class="d">col_box</td>
+<td>Name of the source node for the column mesh. The default is a plain box; point it at your own mesh if you have one.</td></tr>
+<tr><td class="n">World Coords (UE)<small>worldcoords</small></td><td class="d">off</td>
+<td><strong>On</strong> — columns and stairs are computed in world (spline) coordinates, which is what Unreal needs: it undoes the internal straightening of the building. <strong>Off</strong> — the local view, for working in Houdini.</td></tr>
+</table>
+
+<h2 id="lights">Lights <span class="tab">tab</span></h2>
+<table>
+<tr><th>Parameter</th><th>Default</th><th>What it does</th></tr>
+<tr><td class="n">Make Lights<small>makelights</small></td><td class="d">off</td>
+<td>Build ceiling light strips under the slab. This is geometry, not actual light sources. The strips follow the column grid, so build them after the columns are placed.</td></tr>
+<tr><td class="n">Light Width (Z)<small>lightwidth</small></td><td class="d">1.0</td>
+<td>Width of a strip.</td></tr>
+<tr><td class="n">Light Thickness<small>lightthick</small></td><td class="d">0.04</td>
+<td>Thickness of a strip.</td></tr>
+<tr><td class="n">Light Drop (gap)<small>lightdrop</small></td><td class="d">0.03</td>
+<td>How far the strip hangs below the ceiling, so it reads as a separate object.</td></tr>
+<tr><td class="n">Light End Inset<small>lightinset</small></td><td class="d">2.0</td>
+<td>How far the ends of the strip stop short of the walls.</td></tr>
+<tr><td class="n">Lights Material<small>lightsmat</small></td><td class="d">DefaultMaterial</td>
+<td>Material of the strips — normally an emissive one goes here.</td></tr>
+</table>
+
+<h2 id="roof">Roof <span class="tab">tab</span></h2>
+<table>
+<tr><th>Parameter</th><th>Default</th><th>What it does</th></tr>
+<tr><td class="n">Make Roof<small>makeroof</small></td><td class="d">off</td>
+<td>The top level. There are no columns and no ceiling slab up here (the storey below already built it), while the facade, the stairs and both shafts are built as usual. Its height comes from the blocks you put on it — a parapet is routinely about two metres — and the stair and lift housings that stand <em>on</em> the roof get their own floor of 4 m, so the 2.74 m shaft door and its lintel still fit inside a hut rather than a tower.</td></tr>
+<tr><td class="n">Sides → ROOF SIDE # — Corner World Source<small>cornersrc900_#</small></td><td class="d">—</td>
+<td>Corner mesh of a roof side. Works like the sides of a storey, but without bends and transforms — the shape is taken from the building outline.</td></tr>
+<tr><td class="n">BLOCKS → ROOF BLOCK #_# — World Source<small>blksrc900_#_#</small></td><td class="d">—</td>
+<td>Blocks along a roof side — usually the parapet.</td></tr>
+</table>
+<p class="note"><strong>Filling the roof slots.</strong> <em>Make Roof</em> fills the roof sides for you by copying the recipe of the ground floor, so the slots start out holding ground-floor blocks — tall ones. Replace them with the parapet blocks before judging the result. Assign a roof block only while its source node is actually alive and drawn; a slot filled from a node that is not there gets stuck showing whatever stood before, and reassigning on top of it does not clear it.</p>
+
+<h2 id="unreal">Unreal <span class="tab">tab</span></h2>
+<table>
+<tr><th>Parameter</th><th>Default</th><th>What it does</th></tr>
+<tr><td class="n">Blocks Folder<small>blocksdir</small></td><td class="d">$HIP/geo</td>
+<td>The folder the building blocks are read from. <strong>In Houdini, leave it alone</strong> — <code>$HIP/geo</code> is the "geo" folder next to the scene file, and <em>Save Blocks From UE</em> writes exactly there, so the two can never drift apart. <strong>In Unreal</strong>, <code>$HIP</code> points at a temporary session folder, so type the absolute path of your own geo folder here once, for example <code>D:/BuildGen/geo</code>.</td></tr>
+</table>
+
+<h2 id="pack">Pack <span class="tab">tab</span></h2>
+<table>
+<tr><th>Parameter</th><th>Default</th><th>What it does</th></tr>
+<tr><td class="n">Make Instant Static Mesh<small>ismstate</small></td><td class="d">on</td>
+<td>Packs identical blocks into Instanced Static Meshes: in Unreal you get one ISM per unique mesh instead of a separate static mesh per block. Geometry, transforms and collision are unchanged — only the number of assets the bake produces. On by default; there is rarely a reason to turn it off.</td></tr>
+</table>
+
+<h2 id="collision">Collision <span class="tab">tab</span></h2>
+<p class="note">UCX groups are written <strong>inside</strong> the packed geometry, so every instance carries its own collision. Instances get no collision any other way.</p>
+<table>
+<tr><th>Parameter</th><th>Default</th><th>What it does</th></tr>
+<tr><td class="n">Collision Mode<small>ucxmode</small></td><td class="d">UCX From Block Silhouette</td>
+<td><strong>Off</strong> — no collision. <strong>UCX From Block Silhouette</strong> — collision follows the outline of the block, so openings stay open. <strong>Single Box Per Mesh</strong> — one box per mesh: cheap and crude.</td></tr>
+<tr><td class="n">Cell Size<small>ucxcell</small></td><td class="d">0.25</td>
+<td>Grid step used to read the silhouette. Smaller means collision hugs windows and doors more tightly, at the cost of more hulls.</td></tr>
+<tr><td class="n">Wall Thickness<small>ucxthick</small></td><td class="d">0.3</td>
+<td>How far the collision reaches back from the outer face. Blocks often carry a fake interior 1.2 m deep — collision must not follow it, or the rooms lose that much floor space. Set this <strong>before</strong> freezing the blocks.</td></tr>
+<tr><td class="n">Windows<small>ucxglassmode</small></td><td class="d">Auto Detect Panes</td>
+<td>Windows stay solid in every mode. <strong>Merged Into Walls</strong> — the glass is simply part of the wall. <strong>Auto Detect Panes</strong> — each pane gets its own convex hull, so it can be removed later when the glass breaks. <strong>By Material Name</strong> — panes are found by material name instead.</td></tr>
+<tr><td class="n">Window Material Name<small>ucxglasstok</small></td><td class="d">glass</td>
+<td>Space separated substrings, matched against <code>unreal_material</code>, case-insensitive. Used only in <em>By Material Name</em> mode.</td></tr>
+<tr><td class="n">Max Hulls Per Mesh<small>ucxmax</small></td><td class="d">24</td>
+<td>Safety cap. A block that would need more hulls falls back to a single box.</td></tr>
+<tr><td class="n">Collision For Generated Parts<small>ucxparts</small></td><td class="d">on</td>
+<td>Also build collision for the parts the generator makes itself: slabs, stairs, shafts, elevator, columns.</td></tr>
+<tr><td class="n">Show Collision In Houdini<small>ucxvis</small></td><td class="d">off</td>
+<td>Viewport preview only. Collision geometry is never rendered in Unreal either way.</td></tr>
+</table>
+
+<h2 id="uv">About the UV parameters</h2>
+<p>Almost every generated part — floor slab, ceiling top and bottom, stairs, shafts, elevator and its car — carries the same set of four parameters. They are an ordinary Houdini UV projection:</p>
+<table>
+<tr><td class="n">UV Type</td><td class="d">Face</td>
+<td>Projection method. The default <em>Face</em> unwraps each face on its own, which is what slabs and walls want. The other entries (Orthographic, Cylindrical, Rows &amp; Columns and so on) are the standard UV Project list.</td></tr>
+<tr><td class="n">UV Scale</td><td class="d">0.3</td>
+<td>Texture scale. Smaller numbers stretch the texture larger.</td></tr>
+<tr><td class="n">UV Angle</td><td class="d">0</td><td>Rotates the projection.</td></tr>
+<tr><td class="n">UV Offset</td><td class="d">0 0 0</td><td>Shifts the projection.</td></tr>
+</table>
+
+<footer>
+BuildGen · parameter reference · free to use, no attribution required.<br>
+Installation and the one-time block export are described in <code>README.txt</code>, in the same folder as this page.
+</footer>
+
+</div>
+</body>
+</html>

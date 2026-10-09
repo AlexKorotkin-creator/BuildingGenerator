@@ -1,0 +1,26 @@
+This folder is where the building blocks go.
+
+It is empty on purpose. The blocks are Epic Games content from the free
+"City Sample Buildings" pack on Fab and cannot be redistributed, so you
+export them from your own copy of the pack - see README.txt, section
+"GET THE BLOCKS".
+
+The 10 meshes:
+
+   SM_BLDG_SFE_L1_A1_Wall_01_N1
+   SM_BLDG_SFE_L1_A1_Wall_02_N1
+   SM_BLDG_SFE_L1_A1_CornerInL_01_N1
+   SM_BLDG_SFE_L1_A1_CornerInR_01_N1
+   SM_BLDG_SFE_L2_A1_Wall_01_N1
+   SM_BLDG_SFE_L2_A1_CornerInL_01_N1
+   SM_BLDG_SFE_L2_A1_CornerInR_01_N1
+   SM_BLDG_SFE_L3_A1_Wall_01_N1
+   SM_BLDG_SFE_L3_A1_CornerInL_01_N1
+   SM_BLDG_SFE_L3_A1_CornerInR_01_N1
+
+Short version: select the 10 meshes in Unreal, disable Nanite on them,
+right-click -> "Send to Houdini", then press "Save Blocks From UE" on the
+BuildGen node. The .bgeo.sc files land right here.
+
+This is the default Blocks Folder ($HIP/geo). Keep the folder - the button
+writes into it.

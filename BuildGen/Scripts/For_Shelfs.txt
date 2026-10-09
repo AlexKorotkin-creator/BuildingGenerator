@@ -1,0 +1,9 @@
+Shelf buttons (Houdini: right-click on a shelf -> New Tool... -> Script tab).
+Paths resolve relative to the opened scene, so they work wherever you unpacked
+this folder - just keep Generator.hiplc and the Scripts folder together.
+
+Save blocks from UE  ->
+exec(open(hou.text.expandString("$HIP/Scripts/save_from_ue.py")).read())
+
+Import .bgeo blocks  ->
+exec(open(hou.text.expandString("$HIP/Scripts/import_bgeo.py")).read())

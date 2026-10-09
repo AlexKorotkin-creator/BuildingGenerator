@@ -1,0 +1,27 @@
+1: CL_0, W_1@0.085, W_2+N@0.065, EN@0.085, W_2+N@0.065, W_3, W_4 
+2: CL_0, CL_0, W_1@0.085, W_2+N@0.065, EN@0.085, W_2+N@0.065, W_3, W_4
+3: CL_0, CL_0, W_1@0.085, W_2+N@0.065, EN@0.085, W_2+N@0.065, W_3, W_4
+4: CL_0, CL_0, W_1@0.085, W_2+N@0.065, EN@0.085, W_2+N@0.065, W_3, W_4
+5: CL_0
+
+COPIES to type into the generator (Copies of the +N block):
+    side 1     slot 2    W_2                       Copies = 4
+    side 1     slot 4    W_2                       Copies = 3
+
+    side 2     slot 3    W_2                       Copies = 4
+    side 2     slot 5    W_2                       Copies = 3
+
+    side 3     slot 3    W_2                       Copies = 9
+    side 3     slot 5    W_2                       Copies = 9
+
+    side 4     slot 3    W_2                       Copies = 5
+    side 4     slot 5    W_2                       Copies = 5
+
+BEND ANGLE per side (type into the generator):
+    side 1         0.00
+    side 2       -64.56
+    side 3      -107.34
+    side 4      -117.31
+    side 5       -70.79
+
+0.085 - 0.065 - 0.085 – 0.065
